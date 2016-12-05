@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Switch from './Switch'
+import Switch from 'react-native-switch-pro'
 import {
   AppRegistry,
   StyleSheet,
@@ -13,7 +13,6 @@ export default class Example extends Component {
       <View style={styles.container}>
         <Switch value
           onValueChange={(val) => console.log(val)}
-          disabled={false}
         />
       </View>
     );

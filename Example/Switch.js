@@ -7,10 +7,12 @@ import {
   PanResponder,
   TouchableWithoutFeedback
 } from 'react-native'
-import LG from 'react-native-linear-gradient'
 
 export default class Switch extends Component {
   static propTypes = {
+    width: PropTypes.number,
+    height: PropTypes.number,
+    circleColor: PropTypes.string,
     onValueChange: PropTypes.func,
     disabled: PropTypes.bool,
     backgroundActive: PropTypes.string,
@@ -18,7 +20,10 @@ export default class Switch extends Component {
     value: PropTypes.bool
   };
   static defaultProps = {
+    width: 40,
+    height: 21,
     value: false,
+    circleColor: 'white',
     onValueChange: () => null,
     disabled: false,
     backgroundActive: 'green',
@@ -27,10 +32,12 @@ export default class Switch extends Component {
 
   constructor(props, context) {
     super(props, context)
-
+    const { width, height } = props
+    const offset = (width - height) / 2
     this.state = {
+      offset,
       value: props.value,
-      transformSwitch: new Animated.Value(props.value ? 10 : -10)
+      transformSwitch: new Animated.Value(props.value ? offset : -offset)
     }
   }
 
@@ -58,60 +65,57 @@ export default class Switch extends Component {
   }
 
   animateSwitch = (value, cb = () => {}) => {
-    const { transformSwitch } = this.state
+    const { transformSwitch, offset } = this.state
     Animated.timing(transformSwitch,
       { // 按钮的位移
-        toValue: value ? 10 : -10,
+        toValue: value ? offset : -offset,
         duration: 200
       }
     ).start(cb)
   }
 
   render() {
-    const { transformSwitch } = this.state
+    const { transformSwitch, offset } = this.state
 
-    const { backgroundActive, backgroundInactive } = this.props
+    const { backgroundActive, backgroundInactive, width, height, circleColor } = this.props
 
     const interpolatedBackgroundColor = transformSwitch.interpolate({
-      inputRange: [-10, 10],
+      inputRange: [-offset, offset],
       outputRange: [backgroundInactive, backgroundActive]
     })
 
     return (
       <TouchableWithoutFeedback onPress={this.handleSwitch}>
-        <Animated.View style={[styles.container, { backgroundColor: interpolatedBackgroundColor }]}>
+        <Animated.View style={[styles.container, {
+          width, height,
+          borderRadius: height / 2,
+          backgroundColor: interpolatedBackgroundColor }]}>
           <Animated.View
             style={[
               styles.animatedContainer,
-              {transform: [{ translateX: transformSwitch }]},
+              {transform: [{ translateX: transformSwitch }], width},
             ]}>
-            <View style={styles.circle} />
+            <View style={{
+              backgroundColor: circleColor,
+              width: height - 2,
+              height: height - 2,
+              borderRadius: height / 2
+            }} />
           </Animated.View>
         </Animated.View>
       </TouchableWithoutFeedback>
     )
   }
 }
-// 51 / 31
 
 const styles = StyleSheet.create({
   container: {
-    width: 50,
-    height: 30,
-    borderRadius: 30,
     overflow: 'hidden'
   },
   animatedContainer: {
     flex: 1,
-    width: 50,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  circle: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: 'white'
   }
 })

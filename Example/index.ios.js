@@ -1,19 +1,19 @@
-import React, { Component } from 'react';
-import Switch from 'react-native-switch-pro'
+import React, { Component } from 'react'
+import Switch from './Switch'
 import {
   AppRegistry,
   StyleSheet,
+  PanResponder,
   Text,
   View
-} from 'react-native';
+} from 'react-native'
 
 export default class Example extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Switch value
-          onValueChange={(val) => console.log(val)}
-        />
+        <Switch value />
+        <Switch value={false} style={{marginTop: 20}}/>
       </View>
     );
   }
@@ -38,4 +38,4 @@ const styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('Example', () => Example);
+AppRegistry.registerComponent('Example', () => Example)

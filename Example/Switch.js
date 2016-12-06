@@ -1,39 +1,41 @@
 import React, { Component, PropTypes } from 'react'
 import {
   View,
-  Text,
   StyleSheet,
   Animated,
-  PanResponder,
-  TouchableWithoutFeedback
+  TouchableOpacity
 } from 'react-native'
+// TODO: add gesture with 'PanResponder'
 
-export default class Switch extends Component {
+export default class extends Component {
   static propTypes = {
     width: PropTypes.number,
     height: PropTypes.number,
-    circleColor: PropTypes.string,
-    onValueChange: PropTypes.func,
+    value: PropTypes.bool,
     disabled: PropTypes.bool,
+    circleColor: PropTypes.string,
     backgroundActive: PropTypes.string,
     backgroundInactive: PropTypes.string,
-    value: PropTypes.bool
-  };
+    onValueChange: PropTypes.func,
+    style: View.propTypes.style
+  }
+
   static defaultProps = {
     width: 40,
     height: 21,
     value: false,
-    circleColor: 'white',
-    onValueChange: () => null,
     disabled: false,
+    circleColor: 'white',
     backgroundActive: 'green',
     backgroundInactive: '#dddddd',
-  };
+    onValueChange: () => null
+  }
 
-  constructor(props, context) {
+  constructor (props, context) {
     super(props, context)
     const { width, height } = props
     const offset = (width - height) / 2
+
     this.state = {
       offset,
       value: props.value,
@@ -41,7 +43,7 @@ export default class Switch extends Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     const { disabled } = this.props
     if (nextProps.value === this.props.value || disabled) {
       return
@@ -52,7 +54,7 @@ export default class Switch extends Component {
     })
   }
 
-  handleSwitch = () => {
+  toggleSwitch = () => {
     const { value } = this.state
     const { onValueChange, disabled } = this.props
     if (disabled) {
@@ -64,20 +66,22 @@ export default class Switch extends Component {
     })
   }
 
-  animateSwitch = (value, cb = () => {}) => {
+  animateSwitch = (value, callback = () => {}) => {
     const { transformSwitch, offset } = this.state
     Animated.timing(transformSwitch,
-      { // 按钮的位移
+      {
         toValue: value ? offset : -offset,
         duration: 200
       }
-    ).start(cb)
+    ).start(callback)
   }
 
   render() {
     const { transformSwitch, offset } = this.state
-
-    const { backgroundActive, backgroundInactive, width, height, circleColor } = this.props
+    const {
+      backgroundActive, backgroundInactive,
+      width, height, circleColor, style
+    } = this.props
 
     const interpolatedBackgroundColor = transformSwitch.interpolate({
       inputRange: [-offset, offset],
@@ -85,7 +89,9 @@ export default class Switch extends Component {
     })
 
     return (
-      <TouchableWithoutFeedback onPress={this.handleSwitch}>
+      <TouchableOpacity
+        onPress={this.toggleSwitch}
+        activeOpacity={1} style={style}>
         <Animated.View style={[styles.container, {
           width, height,
           borderRadius: height / 2,
@@ -93,7 +99,7 @@ export default class Switch extends Component {
           <Animated.View
             style={[
               styles.animatedContainer,
-              {transform: [{ translateX: transformSwitch }], width},
+              {transform: [{ translateX: transformSwitch }], width}
             ]}>
             <View style={{
               backgroundColor: circleColor,
@@ -103,7 +109,7 @@ export default class Switch extends Component {
             }} />
           </Animated.View>
         </Animated.View>
-      </TouchableWithoutFeedback>
+      </TouchableOpacity>
     )
   }
 }
@@ -116,6 +122,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   }
 })

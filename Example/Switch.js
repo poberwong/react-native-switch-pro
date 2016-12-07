@@ -36,11 +36,10 @@ export default class extends Component {
   constructor (props, context) {
     super(props, context)
     const { width, height } = props
-    const offset = (width - height) / 2
 
     this.state = {
-      offset,
       value: props.value,
+      toggleable: true,
       alignItems: props.value ? 'flex-end' : 'flex-start',
       handlerAnimation: new Animated.Value(props.height - 2),
       switchAnimation: new Animated.Value(props.value ? -1 : 1)
@@ -49,6 +48,7 @@ export default class extends Component {
 
   componentWillReceiveProps (nextProps) {
     const { disabled } = this.props
+
     if (nextProps.value === this.props.value || disabled) {
       return
     }
@@ -73,28 +73,30 @@ export default class extends Component {
 
   _onPanResponderGrant = (evt, gestureState) => {
     const { height } = this.props
-    const { handlerAnimation } = this.state
 
-    Animated.timing(handlerAnimation,
-      {
-        toValue: height * 6 / 5,
-        duration: 100,
-        easing: Easing.linear
-      }
-    ).start()
+    this.animateHandler(height * 6 / 5).start()
   }
 
   _onPanResponderMove = (evt, gestureState) => {
-    
+    const {value, toggleable} = this.state
+
+    this.setState({
+      toggleable: value ? (gestureState.dx < 10) : (gestureState.dx > -10)
+    })
   }
 
   _onPanResponderRelease = (evt, gestureState) => {
-    this.toggleSwitch()
+    const { handlerAnimation } = this.state
+    const { height } = this.props
+
+    this.animateHandler(height - 2).start()
+    this.state.toggleable && this.toggleSwitch()
   }
 
   toggleSwitch = () => {
     const { value, switchAnimation } = this.state
     const { onValueChange, disabled } = this.props
+
     if (disabled) {
       return
     }
@@ -110,7 +112,7 @@ export default class extends Component {
 
   animateSwitch = (value, callback = () => {}) => {
     const { height, width } = this.props
-    const { switchAnimation, handlerAnimation, offset } = this.state
+    const { switchAnimation } = this.state
 
     Animated.parallel([
       Animated.timing(switchAnimation,
@@ -120,18 +122,26 @@ export default class extends Component {
           easing: Easing.linear
         }
       ),
+      this.animateHandler(height - 2)
+    ]).start(callback)
+  }
+
+  animateHandler = (value) => {
+    const { handlerAnimation } = this.state
+
+    return (
       Animated.timing(handlerAnimation,
         {
-          toValue: height - 2,
+          toValue: value,
           duration: 200,
           easing: Easing.linear
         }
       )
-    ]).start(callback)
+    )
   }
 
   render() {
-    const { switchAnimation, handlerAnimation, alignItems, offset, value } = this.state
+    const { switchAnimation, handlerAnimation, alignItems, value } = this.state
     const {
       backgroundActive, backgroundInactive,
       width, height, circleColor, style

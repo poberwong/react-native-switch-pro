@@ -25,7 +25,7 @@ import Switch from 'react-native-switch-pro'
       <View style={styles.container}>
       	<Switch />
       </View>
-    );
+    )
   }
 ...
 ```

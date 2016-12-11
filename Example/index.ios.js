@@ -12,8 +12,13 @@ export default class Example extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Switch value />
-        <Switch value={false} style={{marginTop: 20}}/>
+        <Switch onAsyncPress={(result, callback) => {
+          console.log('async')
+          callback(true)
+        }}
+        />
+        <Switch value={false} style={{marginTop: 20}} onSyncPress={() => console.log('sync')} />
+        <Switch />
       </View>
     );
   }

@@ -92,6 +92,7 @@ export default class extends Component {
     const { handlerAnimation, toggleable, value } = this.state
     const { height, disabled, onAsyncPress, onSyncPress } = this.props
 
+    this.animateHandler(this.handlerSize)
     if (toggleable && !disabled) {
       if (onSyncPress) {
         onSyncPress(!value)
@@ -106,7 +107,6 @@ export default class extends Component {
     const { value, switchAnimation } = this.state
     const toValue = !value
 
-    this.animateHandler(this.handlerSize)
     if (result) {
       this.animateSwitch(toValue, () => {
         this.setState({

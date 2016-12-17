@@ -1,5 +1,6 @@
 # react-native-switch-pro
-an universal switch for android and iOS, it could be the best switch for react-native on Github.
+[![version](https://img.shields.io/npm/v/react-native-switch-pro.svg)](https://www.npmjs.com/package/react-native-switch-pro) [![downloads](https://img.shields.io/npm/dm/react-native-switch-pro.svg?style=flat)](https://www.npmjs.com/package/react-native-switch-pro)  
+An universal switch for android and iOS, it could be the best switch for react-native on Github.
 
 ## Preview
 <img src="http://ww4.sinaimg.cn/large/005zU9b3jw1faioulkg79j30kq10wq3c.jpg" width="340" height="600"/>

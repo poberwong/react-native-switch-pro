@@ -9,8 +9,8 @@ An universal switch for android and iOS, it could be the best switch for react-n
 
 ## Feature
 * Almost perfect switch on react-native
-* Have a good peformance on both iOS and Andriod
-* Add gesture with `PanResponder`  
+* Have a good peformance on both iOS and Android  
+* Add gesture with `PanResponder`  
 * More animations to follow iOS native performance
 * Support async and sync event
 * Clear code style

@@ -1,6 +1,6 @@
 {
   "name": "react-native-switch-pro",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "an universal switcher for andriod and iOS",
   "main": "lib/index.js",
   "scripts": {
@@ -22,4 +22,3 @@
   },
   "homepage": "https://github.com/poberwong/react-native-switch-pro#readme"
 }
-

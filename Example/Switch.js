@@ -9,7 +9,6 @@ import {
 } from 'react-native'
 
 export default class extends Component {
-
   static propTypes = {
     width: PropTypes.number,
     height: PropTypes.number,
@@ -47,18 +46,6 @@ export default class extends Component {
       handlerAnimation: new Animated.Value(this.handlerSize),
       switchAnimation: new Animated.Value(props.value ? -1 : 1)
     }
-  }
-
-  componentWillReceiveProps (nextProps) {
-    const { disabled, value } = this.props
-
-    if (nextProps.value === value || disabled) {
-      return
-    }
-
-    this.animateSwitch(nextProps.value, () => {
-      this.setState({ value: nextProps.value })
-    })
   }
 
   componentWillMount () {
@@ -178,11 +165,5 @@ const styles = StyleSheet.create({
   container: {
     overflow: 'hidden',
     justifyContent: 'center'
-  },
-  animatedContainer: {
-    flex: 1,
-    alignItems: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
   }
 })

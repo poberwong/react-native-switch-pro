@@ -13,6 +13,7 @@ An universal switch for android and iOS, it could be the best switch for react-n
 * Add gesture with `PanResponder`  
 * More animations to follow iOS native performance
 * Support async and sync event
+* Support bidirectional data binding
 * Clear code style
 
 ## Install
@@ -41,7 +42,7 @@ import Switch from 'react-native-switch-pro'
   render() {
     return (
       <View style={styles.container}>
-        <Switch onAsyncPress={(value, callback) => {
+        <Switch onAsyncPress={(callback) => {
           You can call your async module and just invoke callback(true) when succeed,  
           callback(false) when fail.
         }}/>
@@ -56,7 +57,8 @@ import Switch from 'react-native-switch-pro'
 ------|-------------|----------|-----------
 width | width of switch | 40 | number
 height | height of switch | 21 | number
-value | state of switch | false | bool
+value | state of switch which can be used to bidirectional binding | undefined | bool
+defaultValue | default state of switch | false | bool
 disabled | whether switch is clickable | false | bool
 circleColor | color for circle handler of switch | white | string
 backgroundActive | color of switch when it is on | green | string
@@ -65,7 +67,18 @@ onSyncPress | callback when switch is clicked | () => null | func
 onAsyncPress | has a callback with result of async | (value, callback) => {callback(true)} | func
 
 ## Notice
-You'd better not use `onSyncPress` and `onAsyncPress` together or else, only `onSyncPress` will be invoked.
+* You'd better not use `onSyncPress` and `onAsyncPress` together or else, only `onSyncPress` will be invoked.
+* `value` is used with bidirectional binding which could be redux、state and so on.
+In `onAsyncPress`, you should write like following:
+
+```javascript
+<Switch
+  value={this.state.value}
+  onAsyncPress={(callback) => {
+    callback(false or true, toValue => this.setState({value: toValue}))
+  }}
+/>
+```
 
 ## License
 *MIT*

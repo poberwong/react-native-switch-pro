@@ -16,21 +16,16 @@ export default class Example extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Switch onAsyncPress={(result, callback) => {
-          console.log('async')
-          callback(true)
-        }}
-        />
-        <Switch value={false} style={{marginTop: 20}}/>
+        <Switch />
+        <Switch defaultValue={true} style={{marginTop: 20}} />
         <Switch
           width={60}
           height={30}
-          circleColor={'white'}
-          backgroundInactive={'rgba(255,255,255,0.2)'}
           style={{marginTop: 20}}
-          backgroundActive={'green'}
           value={this.state.value}
-          onSyncPress={value => this.setState({value})}
+          onAsyncPress={(callback) => {
+            setTimeout(() => callback(true), 1000)
+          }}
         />
       </View>
     );

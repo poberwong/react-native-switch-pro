@@ -68,17 +68,18 @@ onAsyncPress | has a callback with result of async | (value, callback) => {callb
 
 ## Notice
 * You'd better not use `onSyncPress` and `onAsyncPress` together or else, only `onSyncPress` will be invoked.
-* `value` is used with bidirectional binding which could be redux、state and so on.
-In `onAsyncPress`, you should write like following:
+* `value` is used with bidirectional binding which could be redux、state and so on.  
+In `onAsyncPress`, you should write like following (with state):  
 
-```javascript
-<Switch
-  value={this.state.value}
-  onAsyncPress={(callback) => {
-    callback(false or true, toValue => this.setState({value: toValue}))
-  }}
-/>
-```
+	```javascript
+	<Switch
+	  value={this.state.value}
+	  onAsyncPress={(callback) => {
+	    callback(false or true, value => this.setState({value}))
+     }}
+	/>
+	```
+	`value => this.setState({value})` will only be invoked when result is true.
 
 ## License
 *MIT*

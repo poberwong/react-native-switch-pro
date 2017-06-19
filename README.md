@@ -60,7 +60,8 @@ height | height of switch | 21 | number
 value | state of switch which can be used to bidirectional binding | undefined | bool
 defaultValue | default state of switch | false | bool
 disabled | whether switch is clickable | false | bool
-circleColor | color for circle handler of switch | white | string
+circleColorActive | color for circle handler of switch when it is on | white | string
+circleColorInactive | color for circle handler of switch when it is off | white | string
 backgroundActive | color of switch when it is on | green | string
 backgroundInactive | color of switch when it is off | '#ddd' | string
 onSyncPress | callback when switch is clicked | () => null | func

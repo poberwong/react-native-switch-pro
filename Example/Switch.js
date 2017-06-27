@@ -1,12 +1,5 @@
-import React, { Component, PropTypes } from 'react'
-import {
-  View,
-  StyleSheet,
-  Animated,
-  Easing,
-  PanResponder,
-  TouchableOpacity
-} from 'react-native'
+import React, {Component, PropTypes} from "react";
+import {Animated, Easing, PanResponder, StyleSheet, View} from "react-native";
 
 export default class extends Component {
   static propTypes = {
@@ -15,7 +8,8 @@ export default class extends Component {
     value: PropTypes.bool,
     defaultValue: PropTypes.bool,
     disabled: PropTypes.bool,
-    circleColor: PropTypes.string,
+    circleColorActive: PropTypes.string,
+    circleColorInactive: PropTypes.string,
     backgroundActive: PropTypes.string,
     backgroundInactive: PropTypes.string,
     onAsyncPress: PropTypes.func,
@@ -28,7 +22,8 @@ export default class extends Component {
     height: 21,
     defaultValue: false,
     disabled: false,
-    circleColor: 'white',
+    circleColorActive: 'white',
+    circleColorInactive: 'white',
     backgroundActive: '#43d551',
     backgroundInactive: '#dddddd',
     onAsyncPress: (callback) => {callback(true)}
@@ -76,14 +71,15 @@ export default class extends Component {
   }
 
   _onPanResponderGrant = (evt, gestureState) => {
-    const { height } = this.props
-
+    const { height, disabled } = this.props
+    if (disabled) return;
     this.animateHandler(height * 6 / 5)
   }
 
   _onPanResponderMove = (evt, gestureState) => {
     const { value, toggleable } = this.state
-
+    const { disabled} = this.props
+    if (disabled) return;
     this.setState({
       toggleable: value ? (gestureState.dx < 10) : (gestureState.dx > -10)
     })
@@ -92,13 +88,15 @@ export default class extends Component {
   _onPanResponderRelease = (evt, gestureState) => {
     const { handlerAnimation, toggleable, value } = this.state
     const { height, disabled, onAsyncPress, onSyncPress } = this.props
-
-    if (toggleable && !disabled) {
+    if (disabled) return;
+    if (toggleable) {
       if (onSyncPress) {
         this.toggleSwitch(true, onSyncPress)
       } else {
         onAsyncPress(this.toggleSwitch)
       }
+    } else {
+      this.animateHandler(this.handlerSize)
     }
   }
 
@@ -137,7 +135,7 @@ export default class extends Component {
     Animated.timing(handlerAnimation,
       {
         toValue: value,
-        duration: 200,
+        duration: 50,
         easing: Easing.linear
       }
     ).start(callback)
@@ -147,7 +145,8 @@ export default class extends Component {
     const { switchAnimation, handlerAnimation, alignItems, value } = this.state
     const {
       backgroundActive, backgroundInactive,
-      width, height, circleColor, style
+      width, height, circleColorActive, circleColorInactive, style,
+      ...rest
     } = this.props
 
     const interpolatedBackgroundColor = switchAnimation.interpolate({
@@ -155,21 +154,27 @@ export default class extends Component {
       outputRange: [backgroundInactive, backgroundActive]
     })
 
+    const interpolatedCircleColor = switchAnimation.interpolate({
+      inputRange: value ? [-this.offset, -1]: [1, this.offset],
+      outputRange: [circleColorInactive, circleColorActive]
+    })
+
     return (
       <Animated.View
+        {...rest}
         {...this._panResponder.panHandlers}
         style={[styles.container, style, {
-        width, height,
-        alignItems,
-        borderRadius: height / 2,
-        backgroundColor: interpolatedBackgroundColor }]}>
+          width, height,
+          alignItems,
+          borderRadius: height / 2,
+          backgroundColor: interpolatedBackgroundColor }]}>
         <Animated.View style={{
-          backgroundColor: circleColor,
+          backgroundColor: interpolatedCircleColor,
           width: handlerAnimation,
           height: this.handlerSize,
           borderRadius: height / 2,
           transform: [{ translateX: switchAnimation }]
-          }} />
+        }} />
       </Animated.View>
     )
   }

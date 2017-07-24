@@ -73,13 +73,13 @@ export default class extends Component {
   _onPanResponderGrant = (evt, gestureState) => {
     const { height, disabled } = this.props
     if (disabled) return;
-    this.animateHandler(height * 6 / 5)
+    this.animateHandler(this.handlerSize * 6 / 5)
   }
 
   _onPanResponderMove = (evt, gestureState) => {
     const { value, toggleable } = this.state
     const { disabled} = this.props
-    if (disabled) return;
+    if (disabled) return
     this.setState({
       toggleable: value ? (gestureState.dx < 10) : (gestureState.dx > -10)
     })
@@ -88,7 +88,7 @@ export default class extends Component {
   _onPanResponderRelease = (evt, gestureState) => {
     const { handlerAnimation, toggleable, value } = this.state
     const { height, disabled, onAsyncPress, onSyncPress } = this.props
-    if (disabled) return;
+    if (disabled) return
     if (toggleable) {
       if (onSyncPress) {
         this.toggleSwitch(true, onSyncPress)

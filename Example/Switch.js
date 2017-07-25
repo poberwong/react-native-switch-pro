@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import {
-  View,
+  ViewPropTypes,
   StyleSheet,
   Animated,
   Easing,
@@ -21,7 +21,7 @@ export default class extends Component {
     backgroundInactive: PropTypes.string,
     onAsyncPress: PropTypes.func,
     onSyncPress: PropTypes.func,
-    style: View.propTypes.style
+    style: ViewPropTypes.style
   }
 
   static defaultProps = {

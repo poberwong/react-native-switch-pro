@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from "prop-types"
 import {
   ViewPropTypes,
+  ColorPropType,
   StyleSheet,
   Animated,
   Easing,
@@ -9,26 +10,28 @@ import {
   TouchableOpacity
 } from 'react-native'
 
+const SCALE = 6 / 5
+
 export default class extends Component {
   static propTypes = {
     width: PropTypes.number,
     height: PropTypes.number,
     value: PropTypes.bool,
-    defaultValue: PropTypes.bool,
     disabled: PropTypes.bool,
-    circleColorActive: PropTypes.string,
-    circleColorInactive: PropTypes.string,
-    backgroundActive: PropTypes.string,
-    backgroundInactive: PropTypes.string,
+    circleColorActive: ColorPropType,
+    circleColorInactive: ColorPropType,
+    backgroundActive: ColorPropType,
+    backgroundInactive: ColorPropType,
     onAsyncPress: PropTypes.func,
     onSyncPress: PropTypes.func,
-    style: ViewPropTypes.style
+    style: ViewPropTypes.style,
+    circleStyle: ViewPropTypes.style
   }
 
   static defaultProps = {
     width: 40,
     height: 21,
-    defaultValue: false,
+    value: false,
     disabled: false,
     circleColorActive: 'white',
     circleColorInactive: 'white',
@@ -39,12 +42,11 @@ export default class extends Component {
 
   constructor (props, context) {
     super(props, context)
-    const { width, height } = props
+    const { width, height, value } = props
 
     this.offset = width - height + 1
     this.handlerSize = height - 2
-
-    const value = props.value || props.defaultValue
+    
     this.state = {
       value,
       toggleable: true,
@@ -55,12 +57,19 @@ export default class extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    const { value } = this.state
     if (nextProps === this.props) {
       return
     }
 
-    if (typeof nextProps.value !== 'undefined' && nextProps.value !== value) {
+    // componentWillReceiveProps will still be triggered if
+    // render function of father component is triggered.
+    // Thus, toggleSwitch will be executed without two-way bind.
+    if (typeof nextProps.value !== 'undefined' && nextProps.value !== this.props.value) {
+      /** you can add animation when changing value programmatically like following:
+      /* this.animateHandler(this.handlerSize * SCALE, () => {
+      /*   this.toggleSwitch(true)
+      /*  })
+       **/
       this.toggleSwitch(true)
     }
   }
@@ -82,7 +91,7 @@ export default class extends Component {
     const { disabled } = this.props
     if (disabled) return
 
-    this.animateHandler(this.handlerSize * 6 / 5)
+    this.animateHandler(this.handlerSize * SCALE)
   }
 
   _onPanResponderMove = (evt, gestureState) => {
@@ -112,17 +121,18 @@ export default class extends Component {
     }
   }
 
-  toggleSwitch = (result, callback = () => null) => { // result of async
+  toggleSwitch = (result, callback = () => null) => { // "result" is result of task
     const { value, switchAnimation } = this.state
     const toValue = !value
 
     this.animateHandler(this.handlerSize)
     if (result) {
       this.animateSwitch(toValue, () => {
-        callback(toValue)
         this.setState({
           value: toValue,
           alignItems: toValue ? 'flex-end' : 'flex-start'
+        }, () => {
+          callback(toValue)
         })
         switchAnimation.setValue(toValue ? -1 : 1)
       })
@@ -158,6 +168,7 @@ export default class extends Component {
     const {
       backgroundActive, backgroundInactive,
       width, height, circleColorActive, circleColorInactive, style,
+      circleStyle,
       ...rest
     } = this.props
 
@@ -180,13 +191,13 @@ export default class extends Component {
           alignItems,
           borderRadius: height / 2,
           backgroundColor: interpolatedBackgroundColor }]}>
-        <Animated.View style={{
+        <Animated.View style={[{
           backgroundColor: interpolatedCircleColor,
           width: handlerAnimation,
           height: this.handlerSize,
           borderRadius: height / 2,
           transform: [{ translateX: switchAnimation }]
-        }} />
+        }, circleStyle]} />
       </Animated.View>
     )
   }

@@ -59,7 +59,6 @@ import Switch from 'react-native-switch-pro'
 width | width of switch | 40 | number
 height | height of switch | 21 | number
 value | state of switch which can be used to bidirectional binding | undefined | bool
-defaultValue | default state of switch | false | bool
 disabled | whether switch is clickable | false | bool
 circleColorActive | color for circle handler of switch when it is on | white | string
 circleColorInactive | color for circle handler of switch when it is off | white | string

@@ -3,21 +3,24 @@ import Switch from './Switch'
 import {
   AppRegistry,
   StyleSheet,
-  PanResponder,
   Text,
   View
 } from 'react-native'
 
 export default class Example extends Component {
   state={
-    value: false
+    value: false,
+    value1: true
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <Switch />
-        <Switch defaultValue={true} style={{marginTop: 20}} />
+        <Switch /><Text>uncontrolled</Text>
+        <Switch label={2} value={this.state.value} style={{marginTop: 20}} onSyncPress={(value) => this.setState({value})} />
+        <Text> two way binding</Text>
+        <Switch label={3} value={this.state.value} style={{marginTop: 20}} />
+        <Text> controlled by outside</Text>
         <Switch
           width={60}
           height={30}

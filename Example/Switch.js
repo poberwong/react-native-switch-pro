@@ -7,7 +7,6 @@ import {
   Animated,
   Easing,
   PanResponder,
-  TouchableOpacity
 } from 'react-native'
 
 const SCALE = 6 / 5
@@ -46,7 +45,7 @@ export default class extends Component {
 
     this.offset = width - height + 1
     this.handlerSize = height - 2
-    
+
     this.state = {
       value,
       toggleable: true,
@@ -57,22 +56,24 @@ export default class extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps === this.props) {
+    // unify inner state and outer props
+    if (nextProps.value === this.state.value) {
       return
     }
 
-    // componentWillReceiveProps will still be triggered if
-    // render function of father component is triggered.
-    // Thus, toggleSwitch will be executed without two-way bind.
     if (typeof nextProps.value !== 'undefined' && nextProps.value !== this.props.value) {
-      /** you can add animation when changing value programmatically like following:
-      /* this.animateHandler(this.handlerSize * SCALE, () => {
-      /*   this.toggleSwitch(true)
-      /*  })
-       **/
-      this.toggleSwitch(true)
+      /**
+       /* you can add animation when changing value programmatically like following:
+       /* this.animateHandler(this.handlerSize * SCALE, () => {
+      /*   setTimeout(() => {
+      /*    this.toggleSwitchToValue(true, nextProps.value)
+      /*    }, 800)
+      /* })
+       */
+      this.toggleSwitchToValue(true, nextProps.value)
     }
   }
+
 
   componentWillMount () {
     this._panResponder = PanResponder.create({
@@ -91,11 +92,12 @@ export default class extends Component {
     const { disabled } = this.props
     if (disabled) return
 
+    this.setState({toggleable: true})
     this.animateHandler(this.handlerSize * SCALE)
   }
 
   _onPanResponderMove = (evt, gestureState) => {
-    const { value, toggleable } = this.state
+    const { value } = this.state
     const { disabled } = this.props
     if (disabled) return
 
@@ -105,8 +107,8 @@ export default class extends Component {
   }
 
   _onPanResponderRelease = (evt, gestureState) => {
-    const { handlerAnimation, toggleable, value } = this.state
-    const { height, disabled, onAsyncPress, onSyncPress } = this.props
+    const { toggleable } = this.state
+    const { disabled, onAsyncPress, onSyncPress } = this.props
 
     if (disabled) return
 
@@ -121,9 +123,23 @@ export default class extends Component {
     }
   }
 
-  toggleSwitch = (result, callback = () => null) => { // "result" is result of task
-    const { value, switchAnimation } = this.state
-    const toValue = !value
+  /**
+   *
+   * @param result result of task
+   * @param callback invoke when task is finished
+   */
+  toggleSwitch = (result, callback = () => null) => {
+    const { value } = this.state
+    this.toggleSwitchToValue(result, !value, callback)
+  }
+
+  /**
+   * @param result result of task
+   * @param toValue next status of switch
+   * @param callback invoke when task is finished
+   */
+  toggleSwitchToValue = (result, toValue, callback = () => null) => {
+    const { switchAnimation } = this.state
 
     this.animateHandler(this.handlerSize)
     if (result) {
@@ -174,12 +190,20 @@ export default class extends Component {
 
     const interpolatedBackgroundColor = switchAnimation.interpolate({
       inputRange: value ? [-this.offset, -1]: [1, this.offset],
-      outputRange: [backgroundInactive, backgroundActive]
+      outputRange: [backgroundInactive, backgroundActive],
+      extrapolate: 'clamp'
     })
 
     const interpolatedCircleColor = switchAnimation.interpolate({
       inputRange: value ? [-this.offset, -1]: [1, this.offset],
-      outputRange: [circleColorInactive, circleColorActive]
+      outputRange: [circleColorInactive, circleColorActive],
+      extrapolate: 'clamp'
+    })
+
+    const interpolatedTranslateX = switchAnimation.interpolate({
+      inputRange: value ? [-this.offset, -1]: [1, this.offset],
+      outputRange: value ? [-this.offset, -1]: [1, this.offset],
+      extrapolate: 'clamp'
     })
 
     return (
@@ -196,7 +220,7 @@ export default class extends Component {
           width: handlerAnimation,
           height: this.handlerSize,
           borderRadius: height / 2,
-          transform: [{ translateX: switchAnimation }]
+          transform: [{ translateX: interpolatedTranslateX }]
         }, circleStyle]} />
       </Animated.View>
     )

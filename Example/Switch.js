@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import PropTypes from "prop-types"
+import PropTypes from 'prop-types'
 import {
   ViewPropTypes,
   ColorPropType,
   StyleSheet,
   Animated,
   Easing,
-  PanResponder,
+  PanResponder
 } from 'react-native'
 
 const SCALE = 6 / 5
@@ -36,7 +36,9 @@ export default class extends Component {
     circleColorInactive: 'white',
     backgroundActive: '#43d551',
     backgroundInactive: '#dddddd',
-    onAsyncPress: (callback) => {callback(true)}
+    onAsyncPress: callback => {
+      callback(true)
+    }
   }
 
   constructor (props, context) {
@@ -46,13 +48,13 @@ export default class extends Component {
     this.offset = width - height + 1
     this.handlerSize = height - 2
 
-    this.state = {
-      value,
-      toggleable: true,
-      alignItems: value ? 'flex-end' : 'flex-start',
-      handlerAnimation: new Animated.Value(this.handlerSize),
-      switchAnimation: new Animated.Value(value ? -1 : 1)
-    }
+    this.offset = width - height + 1
+    this.handlerSize = height - 2
+
+    this.state = { value }
+    this.handlerAnimation = new Animated.Value(this.handlerSize)
+    this.switchAnimation = new Animated.Value(value ? -1 : 1)
+    this.toggleable = true
   }
 
   componentWillReceiveProps (nextProps) {
@@ -61,7 +63,10 @@ export default class extends Component {
       return
     }
 
-    if (typeof nextProps.value !== 'undefined' && nextProps.value !== this.props.value) {
+    if (
+      typeof nextProps.value !== 'undefined' &&
+      nextProps.value !== this.props.value
+    ) {
       /**
        /* you can add animation when changing value programmatically like following:
        /* this.animateHandler(this.handlerSize * SCALE, () => {
@@ -73,7 +78,6 @@ export default class extends Component {
       this.toggleSwitchToValue(true, nextProps.value)
     }
   }
-
 
   componentWillMount () {
     this._panResponder = PanResponder.create({
@@ -89,28 +93,21 @@ export default class extends Component {
   }
 
   _onPanResponderGrant = (evt, gestureState) => {
-    const { disabled } = this.props
-    if (disabled) return
-
-    this.setState({toggleable: true})
+    if (this.props.disabled) return
+    this.togglable = true
     this.animateHandler(this.handlerSize * SCALE)
   }
 
   _onPanResponderMove = (evt, gestureState) => {
+    if (this.props.disabled) return
     const { value } = this.state
-    const { disabled } = this.props
-    if (disabled) return
-
-    this.setState({
-      toggleable: value ? (gestureState.dx < 10) : (gestureState.dx > -10)
-    })
+    this.toggleable = value ? gestureState.dx < 10 : gestureState.dx > -10
   }
 
   _onPanResponderRelease = (evt, gestureState) => {
-    const { toggleable } = this.state
-    const { disabled, onAsyncPress, onSyncPress } = this.props
-
-    if (disabled) return
+    if (this.props.disabled) return
+    const { toggleable } = this
+    const { onAsyncPress, onSyncPress } = this.props
 
     if (toggleable) {
       if (onSyncPress) {
@@ -128,100 +125,107 @@ export default class extends Component {
    * @param result result of task
    * @param callback invoke when task is finished
    */
-  toggleSwitch = (result, callback = () => null) => {
-    const { value } = this.state
-    this.toggleSwitchToValue(result, !value, callback)
-  }
+  toggleSwitch = (result, callback = () => null) =>
+    this.toggleSwitchToValue(result, !this.state.value, callback)
 
   /**
    * @param result result of task
    * @param toValue next status of switch
    * @param callback invoke when task is finished
    */
-  toggleSwitchToValue = (result, toValue, callback = () => null) => {
-    const { switchAnimation } = this.state
-
+  toggleSwitchToValue = (result, value, callback = () => null) => {
     this.animateHandler(this.handlerSize)
     if (result) {
-      this.animateSwitch(toValue, () => {
-        this.setState({
-          value: toValue,
-          alignItems: toValue ? 'flex-end' : 'flex-start'
-        }, () => {
-          callback(toValue)
+      this.animateSwitch(value, () => {
+        this.setState({ value }, () => {
+          callback(value)
         })
-        switchAnimation.setValue(toValue ? -1 : 1)
+        this.switchAnimation.setValue(value ? -1 : 1)
       })
     }
   }
 
   animateSwitch = (value, callback = () => null) => {
-    const { switchAnimation } = this.state
-
-    Animated.timing(switchAnimation,
-      {
-        toValue: value ? this.offset : -this.offset,
-        duration: 200,
-        easing: Easing.linear
-      }
-    ).start(callback)
+    Animated.timing(this.switchAnimation, {
+      toValue: value ? this.offset : -this.offset,
+      duration: 200,
+      easing: Easing.linear
+    }).start(callback)
   }
 
-  animateHandler = (value, callback = () => null) => {
-    const { handlerAnimation } = this.state
+  animateHandler = (value, callback = () => null) =>
+    Animated.timing(this.handlerAnimation, {
+      toValue: value,
+      duration: 200,
+      easing: Easing.linear
+    }).start(callback)
 
-    Animated.timing(handlerAnimation,
-      {
-        toValue: value,
-        duration: 200,
-        easing: Easing.linear
-      }
-    ).start(callback)
-  }
-
-  render() {
-    const { switchAnimation, handlerAnimation, alignItems, value } = this.state
+  render () {
+    const { switchAnimation, handlerAnimation } = this
+    const { value } = this.state
     const {
-      backgroundActive, backgroundInactive,
-      width, height, circleColorActive, circleColorInactive, style,
+      backgroundActive,
+      backgroundInactive,
+      width,
+      height,
+      circleColorActive,
+      circleColorInactive,
+      style,
       circleStyle,
       ...rest
     } = this.props
 
-    const interpolatedBackgroundColor = switchAnimation.interpolate({
-      inputRange: value ? [-this.offset, -1]: [1, this.offset],
-      outputRange: [backgroundInactive, backgroundActive],
-      extrapolate: 'clamp'
-    })
+    const alignItems = value ? 'flex-end' : 'flex-start'
+    const borderWidth = value ? 0 : 1
+    const range = value ? [-this.offset, -1] : [1, this.offset]
 
-    const interpolatedCircleColor = switchAnimation.interpolate({
-      inputRange: value ? [-this.offset, -1]: [1, this.offset],
-      outputRange: [circleColorInactive, circleColorActive],
-      extrapolate: 'clamp'
-    })
+    const interpolate = outputRange =>
+      switchAnimation.interpolate({
+        inputRange: range,
+        outputRange,
+        extrapolate: 'clamp'
+      })
 
-    const interpolatedTranslateX = switchAnimation.interpolate({
-      inputRange: value ? [-this.offset, -1]: [1, this.offset],
-      outputRange: value ? [-this.offset, -1]: [1, this.offset],
-      extrapolate: 'clamp'
-    })
+    const interpolatedBackgroundColor = interpolate([
+      backgroundInactive,
+      backgroundActive
+    ])
+
+    const interpolatedCircleColor = interpolate([
+      circleColorInactive,
+      circleColorActive
+    ])
+
+    const interpolatedTranslateX = interpolate(range)
 
     return (
       <Animated.View
         {...rest}
         {...this._panResponder.panHandlers}
-        style={[styles.container, style, {
-          width, height,
-          alignItems,
-          borderRadius: height / 2,
-          backgroundColor: interpolatedBackgroundColor }]}>
-        <Animated.View style={[{
-          backgroundColor: interpolatedCircleColor,
-          width: handlerAnimation,
-          height: this.handlerSize,
-          borderRadius: height / 2,
-          transform: [{ translateX: interpolatedTranslateX }]
-        }, circleStyle]} />
+        style={[
+          styles.container,
+          style,
+          {
+            width,
+            height,
+            alignItems,
+            borderRadius: height / 2,
+            backgroundColor: interpolatedBackgroundColor
+          }
+        ]}
+      >
+        <Animated.View
+          style={[
+            {
+              backgroundColor: interpolatedCircleColor,
+              width: handlerAnimation,
+              height: this.handlerSize,
+              borderRadius: this.handlerSize / 2,
+              transform: [{ translateX: interpolatedTranslateX }]
+            },
+            circleStyle
+          ]}
+        />
       </Animated.View>
     )
   }

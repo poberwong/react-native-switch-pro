@@ -67,6 +67,7 @@ backgroundActive | color of switch when it is on | green | string
 backgroundInactive | color of switch when it is off | '#ddd' | string
 onSyncPress | callback when switch is clicked | () => null | func
 onAsyncPress | has a callback with result of async | (value, callback) => {callback(true)} | func
+accessibilityLabel | announced by screen reader when element is selected | Switch, status: [on/off] | string
 
 ## Notice
 * You'd better not use `onSyncPress` and `onAsyncPress` together or else, only `onSyncPress` will be invoked.

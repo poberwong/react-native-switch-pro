@@ -62,6 +62,7 @@ value | state of switch which can be used to bidirectional binding | undefined |
 disabled | whether switch is clickable | false | bool
 circleColorActive | color for circle handler of switch when it is on | white | string
 circleColorInactive | color for circle handler of switch when it is off | white | string
+style | styles that will be applied for switch container | undefined | style
 circleStyle | styles that will be applied for the circle | undefined | style
 backgroundActive | color of switch when it is on | green | string
 backgroundInactive | color of switch when it is off | '#ddd' | string

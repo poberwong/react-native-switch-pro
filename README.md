@@ -10,7 +10,7 @@ A universal switch for android and iOS, it could be the best switch for react-na
 
 ## Feature
 * Almost perfect switch on react-native
-* Have a good peformance on both iOS and Android  
+* Have a good performance on both iOS and Android  
 * Add gesture with `PanResponder`  
 * More animations to follow iOS native performance
 * Support async and sync event
@@ -71,7 +71,7 @@ onAsyncPress | has a callback with result of async | (value, callback) => {callb
 
 ## Notice
 * You'd better not use `onSyncPress` and `onAsyncPress` together or else, only `onSyncPress` will be invoked.
-* `value` is used with bidirectional binding which could be redux、state and so on.  
+* `value` is used with bidirectional binding which could be redux, state and so on.  
 In `onAsyncPress`, you should write like following (with state):  
 
 	```javascript

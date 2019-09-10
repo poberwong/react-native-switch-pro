@@ -88,7 +88,7 @@ export default class extends Component {
     if (nextProps.value !== prevState.value){
       return 
    }
-   if (typeof nextProps.value !== 'undefined' && nextProps.value !== this.props.value) {
+   if (typeof nextProps.value !== 'undefined' && nextProps.value !== prevState.value) {
    return nextProps.value
   }
    else return null;

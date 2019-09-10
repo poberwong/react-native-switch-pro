@@ -86,7 +86,7 @@ export default class extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState){
     if (nextProps.value !== prevState.value){
-      return 
+      return nextProps.value
    }
    if (typeof nextProps.value !== 'undefined' && nextProps.value !== prevState.value) {
    return nextProps.value

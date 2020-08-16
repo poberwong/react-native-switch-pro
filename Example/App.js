@@ -21,7 +21,7 @@ export default class Example extends Component {
     return (
       <View style={styles.container}>
         <Switch /><Text>uncontrolled</Text>
-        <Switch label={2} value={this.state.value} style={{marginTop: 20}} onSyncPress={(value) => this.setState({value})} />
+        <Switch easing='bounce' animationDuration={1000} label={2} value={this.state.value} style={{marginTop: 20}} onSyncPress={(value) => this.setState({value})} />
         <Text> two way binding</Text>
         <Switch label={3} value={this.state.value} style={{marginTop: 20}} />
         <Text> controlled by outside</Text>

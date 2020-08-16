@@ -8,9 +8,13 @@ import {
 } from 'react-native'
 
 export default class Example extends Component {
-  state={
-    value: false,
-    value1: true
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: false,
+      value1: true
+    }
   }
 
   render() {

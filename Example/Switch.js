@@ -24,7 +24,11 @@ export default class extends Component {
     onAsyncPress: PropTypes.func,
     onSyncPress: PropTypes.func,
     style: ViewPropTypes.style,
-    circleStyle: ViewPropTypes.style
+    circleStyle: ViewPropTypes.style,
+    accessible: PropTypes.bool,
+		accessibilityLabel: PropTypes.string,
+		accessibilityHint: PropTypes.string,
+		accessibilityLiveRegion: PropTypes.oneOf(["assertive", "polite", "none"])
   }
 
   static defaultProps = {
@@ -36,6 +40,9 @@ export default class extends Component {
     circleColorInactive: 'white',
     backgroundActive: '#43d551',
     backgroundInactive: '#dddddd',
+    accessible: true,
+		accessibilityLabel: "Switch button",
+		accessibilityHint: "Switch the button state",
     onAsyncPress: (callback) => {callback(true)}
   }
 
@@ -53,9 +60,20 @@ export default class extends Component {
       handlerAnimation: new Animated.Value(this.handlerSize),
       switchAnimation: new Animated.Value(value ? -1 : 1)
     }
+
+    this._panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: (evt, gestureState) => true,
+      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onMoveShouldSetPanResponder: (evt, gestureState) => true,
+      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
+      onPanResponderTerminationRequest: (evt, gestureState) => true,
+      onPanResponderGrant: this._onPanResponderGrant,
+      onPanResponderMove: this._onPanResponderMove,
+      onPanResponderRelease: this._onPanResponderRelease
+    })
   }
 
-  componentWillReceiveProps (nextProps) {
+  UNSAFE_componentWillReceiveProps (nextProps) {
     // unify inner state and outer props
     if (nextProps.value === this.state.value) {
       return
@@ -72,20 +90,6 @@ export default class extends Component {
        */
       this.toggleSwitchToValue(true, nextProps.value)
     }
-  }
-
-
-  componentWillMount () {
-    this._panResponder = PanResponder.create({
-      onStartShouldSetPanResponder: (evt, gestureState) => true,
-      onStartShouldSetPanResponderCapture: (evt, gestureState) => true,
-      onMoveShouldSetPanResponder: (evt, gestureState) => true,
-      onMoveShouldSetPanResponderCapture: (evt, gestureState) => true,
-      onPanResponderTerminationRequest: (evt, gestureState) => true,
-      onPanResponderGrant: this._onPanResponderGrant,
-      onPanResponderMove: this._onPanResponderMove,
-      onPanResponderRelease: this._onPanResponderRelease
-    })
   }
 
   _onPanResponderGrant = (evt, gestureState) => {
@@ -200,9 +204,24 @@ export default class extends Component {
       extrapolate: 'clamp'
     })
 
+    const circlePosition = (value) => {
+      const modifier = value ? 1 : -1
+      let position = modifier * -1
+
+      if (circleStyle && circleStyle.borderWidth) {
+        position += modifier
+      }
+
+      if (style && style.borderWidth) {
+        position += modifier
+      }
+
+      return position
+    }
+
     const interpolatedTranslateX = switchAnimation.interpolate({
       inputRange: value ? [-this.offset, -1]: [1, this.offset],
-      outputRange: value ? [-this.offset, -1]: [1, this.offset],
+      outputRange: value ? [-this.offset, circlePosition(value)]: [circlePosition(value), this.offset],
       extrapolate: 'clamp'
     })
 
@@ -210,18 +229,32 @@ export default class extends Component {
       <Animated.View
         {...rest}
         {...this._panResponder.panHandlers}
-        style={[styles.container, style, {
+        style={[styles.container, {
           width, height,
           alignItems,
           borderRadius: height / 2,
-          backgroundColor: interpolatedBackgroundColor }]}>
+          backgroundColor: interpolatedBackgroundColor }, style]}>
         <Animated.View style={[{
           backgroundColor: interpolatedCircleColor,
           width: handlerAnimation,
           height: this.handlerSize,
           borderRadius: height / 2,
           transform: [{ translateX: interpolatedTranslateX }]
-        }, circleStyle]} />
+        }, circleStyle]}
+          accessible={this.props.accessible}
+					accessibilityLabel={this.props.accessibilityLabel}
+					accessibilityHint={this.props.accessibilityHint}
+					accessibilityIgnoresInvertColors={false}
+					accessibilityLiveRegion={this.props.accessibilityLiveRegion}
+					accessibilityRole="switch"
+					accessibilityState={{
+						disabled: this.props.disabled,
+						checked: this.state.value
+					}}
+					accessibilityValue={{
+						text: this.state.value ? "on" : "off"
+					}}
+        />
       </Animated.View>
     )
   }

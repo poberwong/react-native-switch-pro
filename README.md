@@ -1,4 +1,4 @@
-# react-native-switch-pro
+# react-native-switch-pro (2.0 is coming)
 [![version](https://img.shields.io/npm/v/react-native-switch-pro.svg)](https://www.npmjs.com/package/react-native-switch-pro) [![downloads](https://img.shields.io/npm/dm/react-native-switch-pro.svg?style=flat)](https://www.npmjs.com/package/react-native-switch-pro)
 [![downloads](https://img.shields.io/npm/dt/react-native-switch-pro.svg?style=flat)](https://www.npmjs.com/package/react-native-switch-pro)  
 A universal switch for android and iOS, it could be the best switch for react-native on Github.
@@ -86,5 +86,3 @@ In `onAsyncPress`, you should write like following (with state):
 
 ## License
 *MIT*
-
-## 2.0 is coming

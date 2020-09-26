@@ -87,4 +87,4 @@ In `onAsyncPress`, you should write like following (with state):
 ## License
 *MIT*
 
-## 2.0 is coming **
+## 2.0 is coming

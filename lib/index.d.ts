@@ -8,6 +8,8 @@ declare module 'react-native-switch-pro' {
     disabled?: boolean;
     circleColorActive?: string;
     circleColorInactive?: string;
+    backgroundActive?: string;
+    backgroundInactive?: string;
     onAsyncPress?: (cb: (result: boolean) => void) => void;
     onSyncPress?: (value: boolean) => void;
     style?: StyleProp<ViewStyle>;

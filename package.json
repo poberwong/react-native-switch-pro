@@ -11,7 +11,8 @@
     "url": "git+https://github.com/poberwong/react-native-switch-pro.git"
   },
   "dependencies": {
-    "prop-types": "^15.5.10"
+    "prop-types": "^15.5.10",
+    "deprecated-react-native-prop-types": "^2.3.0"
   },
   "keywords": [
     "switch",

@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from "prop-types"
 import {
-  ViewPropTypes,
-  ColorPropType,
   StyleSheet,
   Animated,
   Easing,
   PanResponder,
 } from 'react-native'
+import { ColorPropType } from 'deprecated-react-native-prop-types'
 
 const SCALE = 6 / 5
 
@@ -23,8 +22,8 @@ export default class extends Component {
     backgroundInactive: ColorPropType,
     onAsyncPress: PropTypes.func,
     onSyncPress: PropTypes.func,
-    style: ViewPropTypes.style,
-    circleStyle: ViewPropTypes.style
+    style: PropTypes.object,
+    circleStyle: PropTypes.object
   }
 
   static defaultProps = {

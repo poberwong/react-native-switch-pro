@@ -1,13 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from "prop-types"
 import {
-  ViewPropTypes,
-  ColorPropType,
   StyleSheet,
   Animated,
   Easing,
   PanResponder,
-} from 'react-native'
+} from 'react-native';
+import { ViewPropTypes, ColorPropType } from 'deprecated-react-native-prop-types';
 
 const SCALE = 6 / 5
 

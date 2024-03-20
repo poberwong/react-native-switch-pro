@@ -1,6 +1,6 @@
 {
   "name": "react-native-switch-pro",
-  "version": "1.0.5",
+  "version": "1.0.5-0.0.1",
   "description": "an universal switcher for andriod and iOS",
   "main": "lib/index.js",
   "scripts": {
@@ -11,6 +11,7 @@
     "url": "git+https://github.com/poberwong/react-native-switch-pro.git"
   },
   "dependencies": {
+    "deprecated-react-native-prop-types": "^5.0.0",
     "prop-types": "^15.5.10"
   },
   "keywords": [
